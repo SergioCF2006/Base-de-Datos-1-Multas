@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emisión de Multas de Tránsito | Sistema UMG</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --primary: #0f3d64;
+      --primary-dark: #09253d;
+      --primary-light: #1e5c94;
+      --accent: #f59e0b;
+      --bg-surface: #f1f5f9;
+      --card-border: #e2e8f0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-surface);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar styling */
+    .navbar-custom {
+      background: linear-gradient(135deg, #09253d 0%, #0f3d64 100%);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.85) !important;
+      font-weight: 500;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.9rem !important;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Form Section Cards */
+    .section-card {
+      background: #ffffff;
+      border-radius: 1rem;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .section-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-header {
+      background: #f8fafc;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-badge-num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section-body {
+      padding: 1.25rem;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.35rem;
+    }
+
+    .form-control, .form-select {
+      border-radius: 0.5rem;
+      border: 1px solid #cbd5e1;
+      font-size: 0.9rem;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+    }
+
+    /* Summary sticky side column */
+    .summary-card {
+      background: #ffffff;
+      border-radius: 1rem;
+      border: 2px solid #0f3d64;
+      box-shadow: 0 10px 25px -5px rgba(15, 61, 100, 0.15);
+      position: sticky;
+      top: 5rem;
+    }
+
+    .total-badge {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f3d64;
+    }
+
+    .table-infracciones thead th {
+      background: #f8fafc;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table-infracciones tbody td {
+      vertical-align: middle;
+      font-size: 0.85rem;
+    }
+
+    .btn-emitir {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-emitir:hover {
+      background: linear-gradient(135deg, #047857 0%, #059669 100%);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 20px -3px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Print styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Navegación -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top py-2">
+    <div class="container-fluid px-lg-4">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
+        <span class="p-2 bg-white text-primary rounded-3 d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px;">
+          <i class="bi bi-shield-shaded fs-5 text-primary"></i>
+        </span>
+        <div>
+          <span class="fw-bold d-block lh-1">Multas UMG</span>
+          <small class="text-white-50" style="font-size: 0.68rem;">Policía Municipal de Tránsito</small>
+        </div>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-lg-1">
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2" href="dashboard.html">
+              <i class="bi bi-grid-1x2"></i> Inicio
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active d-flex align-items-center gap-2" href="registro_multa.html">
+              <i class="bi bi-file-earmark-plus-fill"></i> Emitir Multa
+            </a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-2 px-3 d-none d-sm-inline-flex align-items-center gap-1">
+            <i class="bi bi-person-badge"></i> Agente Activo: <strong id="topBarAgent">AGENTE-2026</strong>
+          </span>
+          <a href="login.html" class="btn btn-outline-light btn-sm d-flex align-items-center gap-1">
+            <i class="bi bi-box-arrow-right"></i> Salir
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenedor Principal -->
+  <main class="container-fluid px-lg-4 py-4 flex-grow-1">
+    
+    <!-- Encabezado de la página -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+      <div>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-1 small">
+            <li class="breadcrumb-item"><a href="dashboard.html" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Emisión de Boleta</li>
+          </ol>
+        </nav>
+        <h1 class="h3 fw-bold mb-0 text-dark">
+          <i class="bi bi-file-earmark-medical-fill text-primary me-2"></i>Boleta de Infracción de Tránsito
+        </h1>
+        <p class="text-muted small mb-0">Formulario operativo vinculado a las entidades OracleDB (MULTAS, DETALLE_MULTA, CONDUCTORES, VEHÍCULOS)</p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFormulario()">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Reiniciar Formulario
+        </button>
+        <a href="dashboard.html" class="btn btn-outline-primary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Volver al Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Layout Formulario + Resumen Lateral -->
+    <form id="multaForm" novalidate onsubmit="emitirMulta(event)">
+      <div class="row g-4">
+        
+        <!-- Columna Izquierda: Formulario Principal -->
+        <div class="col-12 col-xl-8">
+
+          <!-- ================= SECCIÓN 1: DATOS GENERALES ================= -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-badge-num">1</span>
+              <div>
+                <h2 class="h6 fw-bold mb-0 text-dark">Datos Generales de la Boleta</h2>
+                <small class="text-muted">Parámetros de auditoría y emisión (Tabla: MULTAS)</small>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <label for="fechaMulta" class="form-label">
+                    <i class="bi bi-calendar3 text-primary me-1"></i> Fecha de Emisión
+                  </label>
+                  <input type="date" class="form-control" id="fechaMulta" required>
+                  <div class="invalid-feedback">Seleccione la fecha.</div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="horaMulta" class="form-label">
+                    <i class="bi bi-clock text-primary me-1"></i> Hora de Infracción
+                  </label>
+                  <input type="time" class="form-control" id="horaMulta" required>
+                  <div class="invalid-feedback">Seleccione la hora.</div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label for="idAgente" class="form-label">
+                    <i class="bi bi-shield-lock text-primary me-1"></i> ID del Agente (FK)
+                  </label>
+                  <input type="text" class="form-control bg-light fw-semibold" id="idAgente" readonly required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= SECCIÓN 2: INVOLUCRADOS ================= -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-badge-num">2</span>
+              <div>
+                <h2 class="h6 fw-bold mb-0 text-dark">Involucrados (Conductor y Vehículo)</h2>
+                <small class="text-muted">Búsqueda y enlace con tablas CONDUCTORES y VEHÍCULOS</small>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="row g-3">
+                <!-- Subsección Conductor -->
+                <div class="col-12 col-lg-6 border-end-lg pe-lg-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-primary small">
+                      <i class="bi bi-person-vcard me-1"></i> CONDUCTOR
+                    </span>
+                    <span class="badge bg-secondary-subtle text-secondary small">Tabla: CONDUCTORES</span>
+                  </div>
+
+                  <!-- Buscar DPI -->
+                  <div class="mb-3">
+                    <label for="conductorDpi" class="form-label">DPI / Número de Licencia *</label>
+                    <div class="input-group">
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="conductorDpi" 
+                        placeholder="Ej. 2489-12345-0101" 
+                        required
+                      >
+                      <button class="btn btn-outline-primary" type="button" onclick="buscarConductor()" title="Buscar en Base de Datos">
+                        <i class="bi bi-search"></i> Buscar
+                      </button>
+                    </div>
+                    <small class="text-muted" style="font-size: 0.75rem;">Presiona "Buscar" para autocompletar o prueba con 2489</small>
+                  </div>
+
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <label for="conductorNombres" class="form-label">Nombres *</label>
+                      <input type="text" class="form-control" id="conductorNombres" placeholder="Ej. Carlos Roberto" required>
+                    </div>
+                    <div class="col-6">
+                      <label for="conductorApellidos" class="form-label">Apellidos *</label>
+                      <input type="text" class="form-control" id="conductorApellidos" placeholder="Ej. Mendoza Paz" required>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Subsección Vehículo -->
+                <div class="col-12 col-lg-6 ps-lg-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold text-primary small">
+                      <i class="bi bi-car-front me-1"></i> VEHÍCULO
+                    </span>
+                    <span class="badge bg-secondary-subtle text-secondary small">Tabla: VEHÍCULOS</span>
+                  </div>
+
+                  <!-- Buscar Placa -->
+                  <div class="mb-3">
+                    <label for="vehiculoPlaca" class="form-label">Número de Placa *</label>
+                    <div class="input-group">
+                      <input 
+                        type="text" 
+                        class="form-control text-uppercase" 
+                        id="vehiculoPlaca" 
+                        placeholder="Ej. P-452FKJ" 
+                        required
+                      >
+                      <button class="btn btn-outline-primary" type="button" onclick="buscarVehiculo()" title="Buscar en Base de Datos">
+                        <i class="bi bi-search"></i> Buscar
+                      </button>
+                    </div>
+                    <small class="text-muted" style="font-size: 0.75rem;">Presiona "Buscar" para autocompletar o prueba con P-452</small>
+                  </div>
+
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label for="vehiculoMarca" class="form-label">Marca *</label>
+                      <input type="text" class="form-control" id="vehiculoMarca" placeholder="Ej. Toyota" required>
+                    </div>
+                    <div class="col-4">
+                      <label for="vehiculoModelo" class="form-label">Modelo *</label>
+                      <input type="text" class="form-control" id="vehiculoModelo" placeholder="Ej. Hilux 2021" required>
+                    </div>
+                    <div class="col-4">
+                      <label for="vehiculoColor" class="form-label">Color *</label>
+                      <input type="text" class="form-control" id="vehiculoColor" placeholder="Ej. Gris Plateado" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= SECCIÓN 3: LUGAR ================= -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-badge-num">3</span>
+              <div>
+                <h2 class="h6 fw-bold mb-0 text-dark">Lugar del Incidente</h2>
+                <small class="text-muted">Geolocalización y punto vial exacto (Tabla: LUGAR)</small>
+              </div>
+            </div>
+            <div class="section-body">
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label for="deptoSelect" class="form-label">Departamento *</label>
+                  <select class="form-select" id="deptoSelect" required onchange="cargarMunicipios()">
+                    <option value="" selected disabled>Seleccione Departamento...</option>
+                    <option value="Guatemala" selected>Guatemala</option>
+                    <option value="Sacatepéquez">Sacatepéquez</option>
+                    <option value="Chimaltenango">Chimaltenango</option>
+                    <option value="Escuintla">Escuintla</option>
+                    <option value="Quetzaltenango">Quetzaltenango</option>
+                    <option value="Petén">Petén</option>
+                  </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="municipioSelect" class="form-label">Municipio *</label>
+                  <select class="form-select" id="municipioSelect" required>
+                    <option value="" disabled>Seleccione Municipio...</option>
+                    <option value="Guatemala (Zona Central)" selected>Guatemala (Zona Central)</option>
+                    <option value="Mixco">Mixco</option>
+                    <option value="Villa Nueva">Villa Nueva</option>
+                    <option value="Santa Catarina Pinula">Santa Catarina Pinula</option>
+                    <option value="San Miguel Petapa">San Miguel Petapa</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <label for="direccionExacta" class="form-label">Dirección Exacta / Kilómetro / Referencia *</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-danger"><i class="bi bi-geo-alt-fill"></i></span>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="direccionExacta" 
+                      placeholder="Ej. Calzada Roosevelt frente al Centro Comercial, Km 14.5 sentido oriente" 
+                      value="Calzada Roosevelt 14-25, Zona 11, Carril Derecho"
+                      required
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= SECCIÓN 4: INFRACCIONES (DETALLE_MULTA) ================= -->
+          <div class="section-card">
+            <div class="section-header d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center gap-2">
+                <span class="section-badge-num">4</span>
+                <div>
+                  <h2 class="h6 fw-bold mb-0 text-dark">Infracciones Cometidas</h2>
+                  <small class="text-muted">Permite agregar múltiples tipos de sanción (Tabla: DETALLE_MULTA)</small>
+                </div>
+              </div>
+              <span class="badge bg-primary text-white" id="badgeTotalItems">0 agregadas</span>
+            </div>
+            <div class="section-body">
+              
+              <!-- Selector de Infracción -->
+              <div class="bg-light p-3 rounded-3 border mb-3">
+                <div class="row g-2 align-items-end">
+                  <div class="col-12 col-md-7">
+                    <label for="tipoInfraccionSelect" class="form-label">Seleccionar Tipo de Infracción *</label>
+                    <select class="form-select" id="tipoInfraccionSelect">
+                      <option value="" disabled selected>-- Elija una infracción del catálogo --</option>
+                      <option value="INF-01" data-nombre="Exceso de Velocidad en Perímetro Urbano" data-monto="300">
+                        INF-01: Exceso de Velocidad (Q. 300.00)
+                      </option>
+                      <option value="INF-02" data-nombre="Irrespeto a Luz Roja de Semáforo" data-monto="500">
+                        INF-02: No respetar la señal de alto / Luz roja (Q. 500.00)
+                      </option>
+                      <option value="INF-03" data-nombre="No Portar Licencia de Conducir Vigente" data-monto="200">
+                        INF-03: No portar licencia vigente (Q. 200.00)
+                      </option>
+                      <option value="INF-04" data-nombre="Estacionarse en Lugar Prohibido o Franja Roja" data-monto="250">
+                        INF-04: Estacionar en lugar prohibido / Parada de bus (Q. 250.00)
+                      </option>
+                      <option value="INF-05" data-nombre="Uso de Teléfono Celular al Conducir" data-monto="500">
+                        INF-05: Conducir manipulando dispositivo celular (Q. 500.00)
+                      </option>
+                      <option value="INF-06" data-nombre="Conducir sin Placas de Circulación Visibles" data-monto="400">
+                        INF-06: Placas cubiertas o no portadas (Q. 400.00)
+                      </option>
+                      <option value="INF-07" data-nombre="Conducción bajo Efectos de Alcohol o Drogas" data-monto="1000">
+                        INF-07: Conducción en estado etílico (Q. 1,000.00)
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-3">
+                    <label for="infraccionMonto" class="form-label">Monto (Quetzales)</label>
+                    <div class="input-group">
+                      <span class="input-group-text bg-white">Q.</span>
+                      <input type="number" class="form-control bg-white fw-bold text-primary" id="infraccionMonto" placeholder="0.00" readonly>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-2">
+                    <button type="button" class="btn btn-primary w-100 fw-semibold d-flex align-items-center justify-content-center gap-1" onclick="agregarInfraccion()">
+                      <i class="bi bi-plus-lg"></i> Agregar
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mt-2">
+                  <input type="text" class="form-control form-control-sm" id="infraccionObservacion" placeholder="Observación específica de esta falta (opcional)...">
+                </div>
+              </div>
+
+              <!-- Tabla de Infracciones Agregadas a la Boleta -->
+              <div class="table-responsive">
+                <table class="table table-hover table-infracciones align-middle mb-0" id="tablaDetalles">
+                  <thead>
+                    <tr>
+                      <th style="width: 15%;">Código</th>
+                      <th>Descripción de la Infracción</th>
+                      <th style="width: 25%;">Observación</th>
+                      <th style="width: 15%;" class="text-end">Monto</th>
+                      <th style="width: 10%;" class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyDetalles">
+                    <tr id="emptyRow">
+                      <td colspan="5" class="text-center py-4 text-muted">
+                        <i class="bi bi-info-circle fs-4 d-block mb-1 text-secondary"></i>
+                        No se han agregado infracciones a esta boleta.<br>
+                        <small>Seleccione una arriba y pulse "Agregar".</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna Derecha: Tarjeta Resumen y Botón de Emisión -->
+        <div class="col-12 col-xl-4">
+          <div class="summary-card p-4">
+            <div class="d-flex align-items-center justify-content-between pb-3 border-bottom mb-3">
+              <h3 class="h6 fw-bold mb-0 text-primary">
+                <i class="bi bi-receipt-cutoff me-1"></i> Resumen de Boleta
+              </h3>
+              <span class="badge bg-warning text-dark fw-bold">EN PROCESO</span>
+            </div>
+
+            <!-- Resumen de items -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between text-muted small mb-2">
+                <span>Total de Infracciones:</span>
+                <span class="fw-semibold text-dark" id="summaryCount">0</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small mb-2">
+                <span>Subtotal Sanciones:</span>
+                <span class="fw-semibold text-dark" id="summarySubtotal">Q. 0.00</span>
+              </div>
+              <div class="d-flex justify-content-between text-muted small mb-3">
+                <span>Tasa Administrativa:</span>
+                <span class="fw-semibold text-success">Exenta (Q. 0.00)</span>
+              </div>
+
+              <div class="p-3 bg-light rounded-3 text-center border">
+                <div class="text-muted small fw-semibold text-uppercase">Total Boleta de Pago</div>
+                <div class="total-badge" id="summaryTotal">Q. 0.00</div>
+              </div>
+            </div>
+
+            <!-- Datos de control -->
+            <div class="small text-muted mb-4 border-top pt-3">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="bi bi-database-check text-primary"></i>
+                <span>Destino: <strong>ORACLE_DB.SISTEMA_TRANSITO</strong></span>
+              </div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <i class="bi bi-calendar-event text-primary"></i>
+                <span>Emisión: <span id="resumenFechaHora">--</span></span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-person-badge text-primary"></i>
+                <span>Agente: <span id="resumenAgente">--</span></span>
+              </div>
+            </div>
+
+            <!-- Botón Principal de Emisión -->
+            <button type="submit" class="btn btn-emitir w-100 d-flex align-items-center justify-content-center gap-2 py-3 mb-2">
+              <i class="bi bi-check2-circle fs-5"></i>
+              <span>Guardar y Emitir Multa</span>
+            </button>
+
+            <small class="text-muted text-center d-block" style="font-size: 0.72rem;">
+              Al emitir se creará el registro maestro en <code>MULTAS</code> y los renglones correspondientes en <code>DETALLE_MULTA</code>.
+            </small>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+  </main>
+
+  <!-- Modal de Multa Emitida con Éxito (Boleta Oficial) -->
+  <div class="modal fade" id="modalMultaEmitida" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        
+        <div class="modal-header bg-success text-white py-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-check-circle-fill fs-4"></i>
+            <div>
+              <h5 class="modal-title fw-bold mb-0">¡Boleta de Multa Emitida Exitosamente!</h5>
+              <small class="text-white-50">Transacción confirmada en Base de Datos Oracle</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4" id="printArea">
+          <!-- Formato de boleta impresa -->
+          <div class="border p-4 rounded-3 bg-white">
+            <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+              <div>
+                <h4 class="fw-bold text-primary mb-0">POLICÍA MUNICIPAL DE TRÁNSITO</h4>
+                <p class="text-muted small mb-0">Juzgado de Asuntos Municipales y Tránsito &bull; UMG</p>
+                <small class="text-secondary">Boleta Oficial de Sanción Vial</small>
+              </div>
+              <div class="text-end">
+                <span class="badge bg-danger fs-6 px-3 py-2" id="ticketCode">#MLT-2026-9041</span>
+                <div class="small text-muted mt-1" id="ticketEmitDate">--</div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3 small">
+              <div class="col-6">
+                <strong>DATOS DEL CONDUCTOR:</strong>
+                <div id="ticketConductor">--</div>
+                <div class="text-muted" id="ticketDpi">--</div>
+              </div>
+              <div class="col-6">
+                <strong>DATOS DEL VEHÍCULO:</strong>
+                <div>Placa: <span class="badge bg-dark" id="ticketPlaca">--</span></div>
+                <div class="text-muted" id="ticketVehiculo">--</div>
+              </div>
+              <div class="col-12">
+                <strong>LUGAR DE LA INFRACCIÓN:</strong>
+                <div class="text-muted" id="ticketLugar">--</div>
+              </div>
+              <div class="col-6">
+                <strong>AGENTE FISCALIZADOR:</strong>
+                <div class="text-muted" id="ticketAgente">--</div>
+              </div>
+              <div class="col-6">
+                <strong>ESTADO INICIAL:</strong>
+                <div><span class="badge bg-warning text-dark">PENDIENTE DE PAGO</span></div>
+              </div>
+            </div>
+
+            <!-- Tabla de detalle en boleta -->
+            <div class="table-responsive mb-3">
+              <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Código</th>
+                    <th>Infracción</th>
+                    <th>Observación</th>
+                    <th class="text-end">Monto</th>
+                  </tr>
+                </thead>
+                <tbody id="ticketDetalleBody">
+                  <!-- Se llena con JS -->
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="3" class="text-end">TOTAL GENERAL A PAGAR:</th>
+                    <th class="text-end text-danger fs-6" id="ticketTotal">Q. 0.00</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div class="alert alert-warning py-2 mb-0 small">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i>
+              El infractor dispone de 5 días hábiles para efectuar el pago o presentar su impugnación conforme al Reglamento de Tránsito.
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="limpiarFormulario()">
+            <i class="bi bi-plus-circle me-1"></i> Emitir Otra Multa
+          </button>
+          <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Imprimir Boleta
+          </button>
+          <a href="dashboard.html" class="btn btn-primary">
+            <i class="bi bi-grid-1x2 me-1"></i> Ir al Dashboard
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+    <div class="container">
+      Sistema de Gestión de Multas &bull; Universidad Mariano Gálvez de Guatemala &bull; Proyecto Base de Datos 1
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ==========================================
+    // 1. INICIALIZACIÓN Y CONFIGURACIÓN GENERAL
+    // ==========================================
+    let listaInfracciones = []; // Almacena el array de DETALLE_MULTA
+
+    // Base de datos simulada en memoria para búsquedas instantáneas
+    const DB_CONDUCTORES = {
+      "2489": { dpi: "2489-12345-0101", nombres: "Carlos Roberto", apellidos: "Mendoza Paz" },
+      "1993": { dpi: "1993-98765-0101", nombres: "Andrea Sofía", apellidos: "Morales Cifuentes" },
+      "3012": { dpi: "3012-44556-0101", nombres: "Jorge Mario", apellidos: "Estrada Castillo" }
+    };
+
+    const DB_VEHICULOS = {
+      "P-452": { placa: "P-452FKJ", marca: "Toyota", modelo: "Hilux 2021", color: "Gris Plateado" },
+      "P-128": { placa: "P-128BCC", marca: "Mazda", modelo: "3 Hatchback 2020", color: "Rojo Policromado" },
+      "M-981": { placa: "M-981GHT", marca: "Honda", modelo: "CB125F 2022", color: "Azul Eléctrico" }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Configurar fecha y hora actual automáticamente
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      document.getElementById('fechaMulta').value = `${yyyy}-${mm}-${dd}`;
+
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('horaMulta').value = `${hh}:${min}`;
+
+      // Configurar ID del agente
+      const savedAgent = localStorage.getItem('umg_logged_agent') || 'AGENTE-2026';
+      document.getElementById('idAgente').value = savedAgent;
+      document.getElementById('topBarAgent').textContent = savedAgent;
+      document.getElementById('resumenAgente').textContent = savedAgent;
+      document.getElementById('resumenFechaHora').textContent = `${dd}/${mm}/${yyyy} ${hh}:${min}`;
+
+      // Evento para sincronizar monto al elegir infracción
+      const selectInfraccion = document.getElementById('tipoInfraccionSelect');
+      selectInfraccion.addEventListener('change', () => {
+        const selectedOption = selectInfraccion.options[selectInfraccion.selectedIndex];
+        const monto = selectedOption.getAttribute('data-monto');
+        document.getElementById('infraccionMonto').value = monto ? parseFloat(monto).toFixed(2) : '';
+      });
+
+      // Agregar una infracción inicial demostrativa para facilitar la vista
+      agregarInfraccionDemo("INF-01", "Exceso de Velocidad en Perímetro Urbano", 300, "Registrado a 85 km/h en zona escolar");
+    });
+
+    // ==========================================
+    // 2. BÚSQUEDA SIMULADA EN TABLAS ORACLE
+    // ==========================================
+    function buscarConductor() {
+      const input = document.getElementById('conductorDpi').value.trim();
+      if (!input) {
+        alert('Por favor ingrese un DPI o Licencia para buscar en la base de datos.');
+        return;
+      }
+
+      // Buscar si contiene alguna de las claves
+      let encontrado = null;
+      for (const key in DB_CONDUCTORES) {
+        if (input.includes(key)) {
+          encontrado = DB_CONDUCTORES[key];
+          break;
+        }
+      }
+
+      if (encontrado) {
+        document.getElementById('conductorDpi').value = encontrado.dpi;
+        document.getElementById('conductorNombres').value = encontrado.nombres;
+        document.getElementById('conductorApellidos').value = encontrado.apellidos;
+        mostrarToast('Conductor localizado en OracleDB');
+      } else {
+        alert(`No se encontró registro para "${input}". Puede ingresar los datos manualmente para registrar al nuevo conductor.`);
+      }
+    }
+
+    function buscarVehiculo() {
+      const input = document.getElementById('vehiculoPlaca').value.trim().toUpperCase();
+      if (!input) {
+        alert('Por favor ingrese el número de placa para buscar en la base de datos.');
+        return;
+      }
+
+      let encontrado = null;
+      for (const key in DB_VEHICULOS) {
+        if (input.includes(key)) {
+          encontrado = DB_VEHICULOS[key];
+          break;
+        }
+      }
+
+      if (encontrado) {
+        document.getElementById('vehiculoPlaca').value = encontrado.placa;
+        document.getElementById('vehiculoMarca').value = encontrado.marca;
+        document.getElementById('vehiculoModelo').value = encontrado.modelo;
+        document.getElementById('vehiculoColor').value = encontrado.color;
+        mostrarToast('Vehículo localizado en OracleDB');
+      } else {
+        alert(`No se encontró vehículo con placa "${input}". Puede ingresar las especificaciones manualmente.`);
+      }
+    }
+
+    // ==========================================
+    // 3. GESTIÓN DE DETALLE_MULTA (INFRACCIONES)
+    // ==========================================
+    function agregarInfraccion() {
+      const select = document.getElementById('tipoInfraccionSelect');
+      if (select.selectedIndex === 0 || !select.value) {
+        alert('Por favor elija un tipo de infracción de la lista.');
+        return;
+      }
+
+      const selectedOption = select.options[select.selectedIndex];
+      const codigo = select.value;
+      const nombre = selectedOption.getAttribute('data-nombre');
+      const monto = parseFloat(selectedOption.getAttribute('data-monto'));
+      const observacion = document.getElementById('infraccionObservacion').value.trim();
+
+      // Validar si ya está en la boleta
+      const yaExiste = listaInfracciones.some(item => item.codigo === codigo);
+      if (yaExiste) {
+        if (!confirm('Esta infracción ya está agregada en la boleta. ¿Desea agregarla nuevamente?')) {
+          return;
+        }
+      }
+
+      listaInfracciones.push({
+        id: Date.now(),
+        codigo: codigo,
+        nombre: nombre,
+        monto: monto,
+        observacion: observacion || 'Sin observaciones adicionales'
+      });
+
+      renderizarTablaDetalles();
+
+      // Resetear campos del selector
+      select.selectedIndex = 0;
+      document.getElementById('infraccionMonto').value = '';
+      document.getElementById('infraccionObservacion').value = '';
+    }
+
+    function agregarInfraccionDemo(codigo, nombre, monto, observacion) {
+      listaInfracciones.push({
+        id: Date.now(),
+        codigo: codigo,
+        nombre: nombre,
+        monto: monto,
+        observacion: observacion
+      });
+      renderizarTablaDetalles();
+    }
+
+    function eliminarInfraccion(id) {
+      listaInfracciones = listaInfracciones.filter(item => item.id !== id);
+      renderizarTablaDetalles();
+    }
+
+    function renderizarTablaDetalles() {
+      const tbody = document.getElementById('tbodyDetalles');
+      const badgeTotal = document.getElementById('badgeTotalItems');
+      const summaryCount = document.getElementById('summaryCount');
+      const summarySubtotal = document.getElementById('summarySubtotal');
+      const summaryTotal = document.getElementById('summaryTotal');
+
+      if (listaInfracciones.length === 0) {
+        tbody.innerHTML = `
+          <tr id="emptyRow">
+            <td colspan="5" class="text-center py-4 text-muted">
+              <i class="bi bi-info-circle fs-4 d-block mb-1 text-secondary"></i>
+              No se han agregado infracciones a esta boleta.<br>
+              <small>Seleccione una arriba y pulse "Agregar".</small>
+            </td>
+          </tr>
+        `;
+        badgeTotal.textContent = '0 agregadas';
+        summaryCount.textContent = '0';
+        summarySubtotal.textContent = 'Q. 0.00';
+        summaryTotal.textContent = 'Q. 0.00';
+        return;
+      }
+
+      let html = '';
+      let total = 0;
+
+      listaInfracciones.forEach((item, index) => {
+        total += item.monto;
+        html += `
+          <tr>
+            <td><span class="badge bg-secondary">${item.codigo}</span></td>
+            <td><strong>${item.nombre}</strong></td>
+            <td><small class="text-muted">${item.observacion}</small></td>
+            <td class="text-end fw-bold text-dark">Q. ${item.monto.toFixed(2)}</td>
+            <td class="text-center">
+              <button type="button" class="btn btn-outline-danger btn-sm p-1 px-2" title="Eliminar de boleta" onclick="eliminarInfraccion(${item.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+      badgeTotal.textContent = `${listaInfracciones.length} agregada(s)`;
+      summaryCount.textContent = listaInfracciones.length;
+      summarySubtotal.textContent = `Q. ${total.toFixed(2)}`;
+      summaryTotal.textContent = `Q. ${total.toFixed(2)}`;
+    }
+
+    // ==========================================
+    // 4. EMISIÓN DE MULTA Y VALIDACIÓN
+    // ==========================================
+    function emitirMulta(event) {
+      event.preventDefault();
+      const form = document.getElementById('multaForm');
+
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        alert('Por favor complete todos los campos obligatorios marcados con (*).');
+        return;
+      }
+
+      if (listaInfracciones.length === 0) {
+        alert('Debe agregar al menos una infracción en la Sección 4 (DETALLE_MULTA) para emitir la boleta.');
+        document.getElementById('tipoInfraccionSelect').focus();
+        return;
+      }
+
+      // Generar código único de multa simulando secuencia Oracle (SEQ_MULTAS.NEXTVAL)
+      const numRandom = Math.floor(1000 + Math.random() * 9000);
+      const codigoMulta = `MLT-2026-${numRandom}`;
+
+      // Recopilar datos
+      const fecha = document.getElementById('fechaMulta').value;
+      const hora = document.getElementById('horaMulta').value;
+      const agente = document.getElementById('idAgente').value;
+      const conductor = `${document.getElementById('conductorNombres').value} ${document.getElementById('conductorApellidos').value}`;
+      const dpi = document.getElementById('conductorDpi').value;
+      const placa = document.getElementById('vehiculoPlaca').value.toUpperCase();
+      const vehiculoDesc = `${document.getElementById('vehiculoMarca').value} ${document.getElementById('vehiculoModelo').value} (${document.getElementById('vehiculoColor').value})`;
+      const depto = document.getElementById('deptoSelect').value;
+      const municipio = document.getElementById('municipioSelect').value;
+      const direccion = document.getElementById('direccionExacta').value;
+
+      // Calcular total
+      const totalMonto = listaInfracciones.reduce((sum, item) => sum + item.monto, 0);
+
+      // Cargar en el Modal de Impresión
+      document.getElementById('ticketCode').textContent = '#' + codigoMulta;
+      document.getElementById('ticketEmitDate').textContent = `${fecha} ${hora} hrs`;
+      document.getElementById('ticketConductor').textContent = conductor;
+      document.getElementById('ticketDpi').textContent = `DPI / Licencia: ${dpi}`;
+      document.getElementById('ticketPlaca').textContent = placa;
+      document.getElementById('ticketVehiculo').textContent = vehiculoDesc;
+      document.getElementById('ticketLugar').textContent = `${direccion}, ${municipio}, ${depto}`;
+      document.getElementById('ticketAgente').textContent = agente;
+      document.getElementById('ticketTotal').textContent = `Q. ${totalMonto.toFixed(2)}`;
+
+      // Render detalle en modal
+      const ticketDetalleBody = document.getElementById('ticketDetalleBody');
+      ticketDetalleBody.innerHTML = listaInfracciones.map(item => `
+        <tr>
+          <td><span class="badge bg-light text-dark border">${item.codigo}</span></td>
+          <td>${item.nombre}</td>
+          <td><small class="text-muted">${item.observacion}</small></td>
+          <td class="text-end fw-semibold">Q. ${item.monto.toFixed(2)}</td>
+        </tr>
+      `).join('');
+
+      // Mostrar modal
+      const modal = new bootstrap.Modal(document.getElementById('modalMultaEmitida'));
+      modal.show();
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('multaForm').reset();
+      document.getElementById('multaForm').classList.remove('was-validated');
+      listaInfracciones = [];
+      renderizarTablaDetalles();
+      
+      // Restaurar datos por defecto
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      document.getElementById('fechaMulta').value = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('horaMulta').value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      document.getElementById('idAgente').value = localStorage.getItem('umg_logged_agent') || 'AGENTE-2026';
+    }
+
+    function mostrarToast(mensaje) {
+      alert(`[OracleDB]: ${mensaje}`);
+    }
+
+    function cargarMunicipios() {
+      const depto = document.getElementById('deptoSelect').value;
+      const munSelect = document.getElementById('municipioSelect');
+      munSelect.innerHTML = '';
+
+      const munis = {
+        "Guatemala": ["Guatemala (Zona Central)", "Mixco", "Villa Nueva", "Santa Catarina Pinula", "San Miguel Petapa", "Chinautla"],
+        "Sacatepéquez": ["Antigua Guatemala", "Ciudad Vieja", "Jocotenango", "San Lucas Sacatepéquez"],
+        "Chimaltenango": ["Chimaltenango", "El Tejar", "Zaragoza", "San Andrés Itzapa"],
+        "Escuintla": ["Escuintla", "Palín", "Santa Lucía Cotzumalguapa", "Puerto San José"],
+        "Quetzaltenango": ["Quetzaltenango (Xela)", "Salcajá", "La Esperanza", "Olintepeque"],
+        "Petén": ["Flores", "San Benito", "Santa Elena", "Poptún"]
+      };
+
+      const lista = munis[depto] || ["Cabecera Municipal"];
+      lista.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        munSelect.appendChild(opt);
+      });
+    }
+  </script>
+</body>
+</html>
